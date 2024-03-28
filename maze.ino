@@ -89,7 +89,7 @@ bool isPotentialHouse(unsigned int *sensorValues) {
 
   
 
-  // Calculate the width of the Zumo
+
   int zumoWidth = 10;
 
   // Calculate the dimensions of the enclosed area
