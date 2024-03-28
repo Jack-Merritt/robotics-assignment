@@ -7,9 +7,8 @@
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
 
-const int THRESHOLD_VALUE = 1000; // Adjust as needed
+const int THRESHOLD_VALUE = 1000;
 
-// Define maze dimensions
 const int MAZE_HEIGHT = 10;
 const int MAZE_WIDTH = 10;
 
@@ -20,7 +19,7 @@ int robotY = 0;
 // Define maze map
 char mazeMap[MAZE_HEIGHT][MAZE_WIDTH];
 
-// Define distance and visited arrays for Dijkstra's algorithm
+// Define distance and visited arrays for Dijkstra's shortest path
 int dist[MAZE_HEIGHT][MAZE_WIDTH];
 bool visited[MAZE_HEIGHT][MAZE_WIDTH];
 
@@ -41,7 +40,7 @@ void loop() {
   unsigned int sensorValues[5];
   lineSensors.read(sensorValues);
 
-  // Follow the white line while avoiding obstacles (black lines)
+
   if (areAllSensorsOnWhite(sensorValues)) {
     moveForward();
     updateMap();
@@ -50,15 +49,15 @@ void loop() {
     stopMotors();
     delay(100);
     if (isDeadEnd(sensorValues)) {
-      // Dead-end detected, turn around to backtrack
+      
       turnAround();
       updateMap();
     } else if (isPotentialHouse(sensorValues)) {
-      // Found a potential house, approach the entry point
+     
       approachHouse();
       updateMap();
     } else {
-      // No dead end or potential house, turn left to avoid the obstacle
+      
       turnLeft();
       updateMap();
     }
@@ -76,19 +75,19 @@ bool areAllSensorsOnWhite(unsigned int *sensorValues) {
 }
 
 bool isDeadEnd(unsigned int *sensorValues) {
-  // Check if all sensors detect black (indicating a dead end)
+
   for (int i = 0; i < 5; i++) {
     if (sensorValues[i] >= THRESHOLD_VALUE) {
-      return false; // At least one sensor does not detect black
+      return false; 
     }
   }
-  return true; // All sensors detect black
+  return true;
 }
 
 bool isPotentialHouse(unsigned int *sensorValues) {
-  // Check if the enclosed area meets the criteria of a potential house
-  // The enclosed area should be five times the width of the Zumo
-  // The entry point through the fencing should be 2.5 times the width of the Zumo
+  
+
+  
 
   // Calculate the width of the Zumo
   int zumoWidth = 10;
@@ -118,17 +117,17 @@ void turnLeft() {
 }
 
 void turnAround() {
-  motors.setSpeeds(-200, 200); // Turn left (adjust as needed for your robot)
-  delay(500); // Adjust duration for a full turn
+  motors.setSpeeds(-200, 200); 
+  delay(500); 
 }
 
 void approachHouse() {
-  const int SLOW_SPEED = 50; // Adjust the slow speed as needed
+  const int SLOW_SPEED = 50; 
 
-  // Slowly approach the potential house without touching it
+  /
   motors.setSpeeds(SLOW_SPEED, SLOW_SPEED);
-  delay(2000); // Adjust the duration for approaching
-  motors.setSpeeds(0, 0); // Stop near the potential house
+  delay(2000); 
+  motors.setSpeeds(0, 0); 
   returnHome();
 
 }
@@ -153,23 +152,23 @@ void initializeMap() {
 }
 
 void dijkstra() {
-  // Implementation of Dijkstra's algorithm to find the shortest path
-  // Initialize priority queue (min heap) to store cells
+  // Implementation of shortest path
+  // store cells
   priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> pq;
 
   // Add starting position to priority queue
   pq.push({0, {robotX, robotY}});
-  // Initialize starting cell's parent as itself
+ 
   parent[robotX][robotY] = {robotX, robotY};
 
   while (!pq.empty()) {
-    // Extract the minimum distance vertex from priority queue
+  
     int u = pq.top().second.first;
     int v = pq.top().second.second;
     int w = pq.top().first;
     pq.pop();
 
-    // Mark the extracted vertex as visited
+    
     visited[u][v] = true;
 
     // Explore all adjacent cells
@@ -177,7 +176,7 @@ void dijkstra() {
       int newX = u + dx[i];
       int newY = v + dy[i];
 
-      // Check if new position is valid and unvisited
+      
       if (isValid(newX, newY) && !visited[newX][newY]) {
         // Calculate new distance
         int newDist = w + 1; // Assuming unit weight for each cell
